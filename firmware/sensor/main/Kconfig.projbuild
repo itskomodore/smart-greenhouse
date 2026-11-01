@@ -1,0 +1,8 @@
+menu "Sensor report"
+config REPORT_DEST_ADDR
+    string "CoAP destination (Pi mesh-local EID)"
+    default "fd00::1"
+config REPORT_PERIOD_S
+    int "Report period (s)"
+    default 300
+endmenu
