@@ -1,0 +1,11 @@
+# build output and tool caches
+build/
+.cache/
+managed_components/
+
+# generated config; holds the Thread network key
+sdkconfig
+sdkconfig.old
+
+# Thread dataset (network key)
+dataset.txt
