@@ -1,0 +1,50 @@
+[Unit]
+Description=Greenhouse MOCK pump actuator (test only, NOT a real pump driver)
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=greenhouse
+Group=greenhouse
+WorkingDirectory=/opt/greenhouse/edge
+# Binds 127.0.0.1 only. Pair with ACTUATOR_HOST=127.0.0.1 / ACTUATOR_PORT=5684 in edge.env.
+Environment=MOCK_COAP_HOST=127.0.0.1 MOCK_COAP_PORT=5684 LOG_LEVEL=info
+Environment=NODE_OPTIONS=--max-old-space-size=48
+ExecStart=/usr/bin/node dist/coap/mock-actuator.js
+SyslogIdentifier=greenhouse-mock-actuator
+StandardOutput=journal
+StandardError=journal
+Restart=always
+RestartSec=2
+KillSignal=SIGTERM
+TimeoutStopSec=10
+
+MemoryMax=96M
+TasksMax=32
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallArchitectures=native
+UMask=0077
+
+[Install]
+# Not enabled by default. install.sh enables it only with --with-mock-actuator.
+WantedBy=multi-user.target

@@ -1,0 +1,63 @@
+[Unit]
+Description=Greenhouse edge controller (sensor ingest, rules engine, pump actuator)
+Wants=network-online.target
+After=network-online.target postgresql.service
+# Never give up restarting: the app refuses unsafe starts itself (see docs/README.md, safety model).
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=greenhouse
+Group=greenhouse
+WorkingDirectory=/opt/greenhouse/edge
+# Root-owned, 0600. systemd reads it as root before dropping privileges.
+# install.sh writes it; it holds API_TOKEN and DATABASE_URL (secrets). Never commit it.
+EnvironmentFile=/etc/greenhouse/edge.env
+Environment=NODE_OPTIONS=--max-old-space-size=160
+ExecStart=/usr/bin/node dist/main.js
+SyslogIdentifier=greenhouse-edge
+StandardOutput=journal
+StandardError=journal
+
+# Restart on any exit, including clean exit after a shutdown. RestartSec=2 keeps a
+# crash loop gentle on the Pi and on the database.
+Restart=always
+RestartSec=2
+
+# SIGTERM makes the app turn the pump OFF (best effort, hard limit 20 s), then exit 0.
+# TimeoutStopSec must stay above the app's 20 s hard limit so SIGKILL never races the OFF.
+KillSignal=SIGTERM
+TimeoutStopSec=25
+
+# Resource limits. Node heap is capped at 160 MB via NODE_OPTIONS; MemoryMax is the cgroup
+# backstop for RSS beyond the heap (target steady RSS < 200 MB on a Pi 4 with 2 GiB).
+MemoryMax=300M
+TasksMax=64
+
+# Hardening. The service needs: read /opt/greenhouse, write nothing except its StateDirectory,
+# UDP/TCP over IPv4/IPv6 and AF_UNIX (postgres socket, DNS). No capabilities (ports >= 1024).
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+# MemoryDenyWriteExecute is deliberately NOT set: V8's JIT needs W+X pages.
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallArchitectures=native
+UMask=0077
+StateDirectory=greenhouse-edge
+
+[Install]
+WantedBy=multi-user.target

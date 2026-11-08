@@ -1,0 +1,65 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors / IDEs
+*.swp
+*.swo
+*~
+.idea/
+cmake-build-*/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Claude Code local settings (keep shared .claude/ config tracked)
+.claude/settings.local.json
+
+# Secrets / local env
+.env
+.env.*
+!.env.example
+*.pem.key
+*.key
+
+# Node / edge service
+node_modules/
+dist/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+coverage/
+
+# Local data / databases
+*.sqlite
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
+*.db
+*.db-journal
+
+# ESP-IDF / firmware build output
+build/
+sdkconfig
+sdkconfig.old
+managed_components/
+dependencies.lock
+.cache/
+compile_commands.json
+*.elf
+*.map
+*.bin
+*.uf2
+*.o
+*.a
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Docs build output
+docs/_build/
