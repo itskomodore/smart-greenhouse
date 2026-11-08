@@ -20,6 +20,8 @@ export const EnvSchema = z.object({
   // CoAP server (sensor ingest)
   COAP_HOST: z.string().default('::'),
   COAP_PORT: z.coerce.number().int().default(5683),
+  // OpenThread border router interface; its addresses are shown on the dashboard as the sensor target.
+  THREAD_IFACE: z.string().default('wpan0'),
 
   // Actuator
   ACTUATOR_HOST: z.string().default('127.0.0.1'),

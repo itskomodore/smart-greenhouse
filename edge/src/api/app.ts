@@ -41,7 +41,11 @@ import {
   type Issue,
 } from './validation.js';
 
+import type { NetworkInfo } from './network.js';
+
 export interface ApiOptions {
+  /** Network addresses shown on the dashboard (Thread/OTBR + LAN). Optional; omitted in tests. */
+  network?: () => NetworkInfo;
   repo: ApiRepo;
   controller: ApiController;
   bus: ApiBus;
@@ -331,6 +335,7 @@ export async function createApi(opts: ApiOptions): Promise<Api> {
       db: repo.dbUp(),
       auto_enabled: settings.auto_enabled,
       daily_runtime_s: dailyRuntimeSeconds(),
+      network: opts.network ? opts.network() : null,
     };
   });
 

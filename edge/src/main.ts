@@ -10,6 +10,7 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createApi, type Api } from './api/app.js';
+import { getNetworkInfo } from './api/network.js';
 import { errorMessage, tryWithin } from './api/deadline.js';
 import type { ApiRepo } from './api/deps.js';
 import { createShutdown, pumpOffBestEffort } from './api/shutdown.js';
@@ -192,6 +193,7 @@ async function main(): Promise<void> {
       bus,
       apiToken: cfg.API_TOKEN,
       dashboardDir: resolve(process.cwd(), cfg.DASHBOARD_DIR),
+      network: () => getNetworkInfo(cfg.COAP_PORT, cfg.THREAD_IFACE),
       log: createLogger('api'),
     });
     await api.app.listen({ host: cfg.HTTP_HOST, port: cfg.HTTP_PORT });
