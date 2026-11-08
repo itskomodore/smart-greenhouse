@@ -4,6 +4,7 @@ import { Calibration } from './components/Calibration.js';
 import { Cards } from './components/Cards.js';
 import { Chart } from './components/Chart.js';
 import { EventsList } from './components/EventsList.js';
+import { NetworkCard } from './components/NetworkCard.js';
 import { PumpPanel } from './components/PumpPanel.js';
 import { SettingsForm } from './components/SettingsForm.js';
 import { TokenBar } from './components/TokenBar.js';
@@ -93,6 +94,7 @@ export function App() {
               <PumpPanel token={token} />
               <EventsList />
             </div>
+            <NetworkCard />
           </>
         )}
         {tab === 'settings' && <SettingsForm token={token} />}

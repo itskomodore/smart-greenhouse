@@ -47,7 +47,10 @@ Default last 24 h, `limit` default 1000, max 5000. Ascending `ts`. Server downsa
   "nodes": { "<id>": { "last_seen": iso, "age_s": n, "stale": bool } },
   "alarms": Alarm[],
   "db": bool, "auto_enabled": bool,
-  "daily_runtime_s": n }
+  "daily_runtime_s": n,
+  "network": { "coap_port": n, "thread_iface": "wpan0", "thread_iface_present": bool,
+               "thread": [{ "address": str, "kind": "ula|global|link-local", "coap_url": str }],
+               "lan": [{ "address": str, "kind": "ipv4", "coap_url": str }] } | null }
 ```
 
 ### POST /api/pump 🔒

@@ -235,3 +235,11 @@ input[type='checkbox'] { width: 1.2rem; height: 1.2rem; accent-color: var(--acce
 .result-ok { color: var(--ok); }
 .result-pending { color: var(--warn); }
 .result-error { color: var(--bad); }
+
+.network-card h2 { margin: 0 0 0.25rem; font-size: 1rem; }
+.network-card h3 { margin: 0.75rem 0 0.25rem; font-size: 0.85rem; }
+.net-list { list-style: none; margin: 0.5rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.net-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.net-kind { font-size: 0.75rem; color: var(--muted, inherit); min-width: 9rem; }
+.net-addr { flex: 1 1 12rem; overflow-wrap: anywhere; user-select: all; }
+.net-copy { padding: 0.25rem 0.6rem; }

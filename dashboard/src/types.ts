@@ -85,6 +85,20 @@ export interface NodeStatus {
   stale: boolean;
 }
 
+export interface NetAddress {
+  address: string;
+  kind: 'link-local' | 'ula' | 'global' | 'ipv4';
+  coap_url: string;
+}
+
+export interface NetworkInfo {
+  coap_port: number;
+  thread_iface: string;
+  thread_iface_present: boolean;
+  thread: NetAddress[];
+  lan: NetAddress[];
+}
+
 export interface Status {
   now: string;
   uptime_s: number;
@@ -94,6 +108,8 @@ export interface Status {
   db: boolean;
   auto_enabled: boolean;
   daily_runtime_s: number;
+  /** Null on older edge builds. */
+  network?: NetworkInfo | null;
 }
 
 /** GET /api/latest */

@@ -90,4 +90,4 @@ Installs Node, pnpm and Postgres, creates the database and a generated `API_TOKE
 
 ## Further reading
 
-[docs/README.md](docs/README.md) for the architecture, ops runbook, calibration procedure and safety model; [docs/API.md](docs/API.md) for the HTTP and CoAP contract; [docs/adr/](docs/adr/) for design decisions.
+[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for the developer guide (code map, data flow, safety invariants, testing, how to make common changes); [docs/README.md](docs/README.md) for the architecture, ops runbook, calibration procedure and safety model; [docs/API.md](docs/API.md) for the HTTP and CoAP contract; [docs/adr/](docs/adr/) for design decisions.
