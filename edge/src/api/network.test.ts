@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { buildNetworkInfo, classify } from './network.js';
+import { vi } from 'vitest';
+import { buildNetworkInfo, classify, getNetworkInfo } from './network.js';
 
 const v6 = (address: string, internal = false) => ({
   address,
@@ -52,5 +53,21 @@ describe('network info', () => {
   it('strips a zone id from addresses', () => {
     const info = buildNetworkInfo({ wpan0: [v6('fe80::1%wpan0')] }, 5683, 'wpan0');
     expect(info.thread[0]?.address).toBe('fe80::1');
+  });
+
+  it('getNetworkInfo never throws when the OS call fails', async () => {
+    vi.resetModules();
+    vi.doMock('node:os', () => ({
+      networkInterfaces: () => {
+        throw new Error('uv_interface_addresses returned EAFNOSUPPORT');
+      },
+    }));
+    const mod = await import('./network.js');
+    const info = mod.getNetworkInfo(5683, 'wpan0');
+    expect(info.error).toContain('EAFNOSUPPORT');
+    expect(info.thread).toEqual([]);
+    expect(info.lan).toEqual([]);
+    vi.doUnmock('node:os');
+    expect(typeof getNetworkInfo).toBe('function');
   });
 });

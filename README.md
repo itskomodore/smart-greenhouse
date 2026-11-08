@@ -62,6 +62,23 @@ sudo ./deploy/install.sh --http-host <pi-lan-ip> --actuator-host <actuator-ip>
 
 Installs Node, pnpm and Postgres, creates the database and a generated `API_TOKEN` in `/etc/greenhouse/edge.env`, builds and stages the app under `/opt/greenhouse`, and starts the `greenhouse-edge` systemd service. It is safe to re-run to upgrade. The firewall and timezone are not changed; the script prints examples. Details, runbook, backup and rollback are in [docs/README.md](docs/README.md).
 
+### Update a deployed Pi
+
+After you commit and push from your dev machine:
+
+```bash
+# on the Pi
+cd ~/smart-greenhouse && git pull
+sudo ./deploy/install.sh        # no flags needed; keeps the same secrets and settings
+```
+
+The installer stops the service first (which sends a pump OFF), rebuilds edge and the dashboard, runs pending migrations, restarts the service and checks `/healthz`. The pump is off while the service is down, so avoid upgrading during a watering run.
+
+- Back up before an upgrade that adds a migration (`pg_dump greenhouse > backup.sql`). Migrations only go forward.
+- Edits to `/etc/greenhouse/edge.env` survive upgrades. A new setting you have not added to that file uses its default.
+- Roll back with `git checkout <old-commit>` and re-run the installer. Restore the dump to roll back the schema too.
+- Never commit `edge/.env`; it holds the API token (it is git-ignored, but check `git status`).
+
 ## How it behaves
 
 - **Input:** sensor sends CoAP `POST` or `PUT` to `/sensor` with `{"t":23.41,"rh":55.2,"light":812,"soil":1530}`. Invalid payloads get `4.00` and never crash the server. The server timestamps each reading.

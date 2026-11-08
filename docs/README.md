@@ -338,7 +338,9 @@ sudo ./deploy/install.sh               # re-applies everything; keeps the same s
 ```
 
 The installer stops the service (pump OFF) before it swaps files, runs pending migrations, then
-restarts and checks `/healthz`. Migrations are forward-only. To roll back the code, check out the
+restarts and checks `/healthz`. The pump is off while the service is down, so avoid upgrading during
+a watering run. `/etc/greenhouse/edge.env` is kept across upgrades, and a new setting missing from it
+uses its default. Migrations are forward-only. To roll back the code, check out the
 old commit and re-run the installer. To roll back the schema, restore the pre-upgrade dump (section
 5.4). Take a dump before any upgrade that includes a new migration.
 

@@ -19,6 +19,8 @@ export interface NetworkInfo {
   thread: NetAddress[];
   /** Non-internal IPv4 addresses on other interfaces (LAN). */
   lan: NetAddress[];
+  /** Set when the interface list could not be read; the lists are then empty. */
+  error?: string;
 }
 
 type Ifaces = NodeJS.Dict<NetworkInterfaceInfo[]>;
@@ -71,6 +73,18 @@ export function buildNetworkInfo(ifaces: Ifaces, coapPort: number, threadIface: 
   };
 }
 
+/** Never throws: os.networkInterfaces() can fail (e.g. sandboxed without AF_NETLINK). */
 export function getNetworkInfo(coapPort: number, threadIface: string): NetworkInfo {
-  return buildNetworkInfo(networkInterfaces(), coapPort, threadIface);
+  try {
+    return buildNetworkInfo(networkInterfaces(), coapPort, threadIface);
+  } catch (err) {
+    return {
+      coap_port: coapPort,
+      thread_iface: threadIface,
+      thread_iface_present: false,
+      thread: [],
+      lan: [],
+      error: err instanceof Error ? err.message : String(err),
+    };
+  }
 }

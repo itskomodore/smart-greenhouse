@@ -97,6 +97,7 @@ export interface NetworkInfo {
   thread_iface_present: boolean;
   thread: NetAddress[];
   lan: NetAddress[];
+  error?: string;
 }
 
 export interface Status {

@@ -52,7 +52,8 @@ RestrictRealtime=yes
 RestrictNamespaces=yes
 LockPersonality=yes
 # MemoryDenyWriteExecute is deliberately NOT set: V8's JIT needs W+X pages.
-RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+# AF_NETLINK: os.networkInterfaces() (dashboard "Sensor target" card) needs it on Linux.
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
 CapabilityBoundingSet=
 AmbientCapabilities=
 SystemCallArchitectures=native

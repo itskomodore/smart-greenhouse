@@ -61,7 +61,9 @@ export function NetworkCard() {
       <p className="muted">
         Point the sensor node at one of these on UDP port <strong>{net.coap_port}</strong> (<code>POST /sensor</code>).
       </p>
-      {net.thread_iface_present ? (
+      {net.error ? (
+        <p className="muted">Could not read network interfaces: {net.error}</p>
+      ) : net.thread_iface_present ? (
         <ul className="net-list">
           {net.thread.map((a) => (
             <Row key={a.address} a={a} />
