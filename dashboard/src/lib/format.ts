@@ -33,6 +33,25 @@ export function fmtNum(n: number | null | undefined, digits = 1): string {
   return n.toFixed(digits);
 }
 
+/** Percent value rounded to at most `digits` decimals, trailing zeros dropped: 28.944 -> "28.9", 30.0 -> "30". */
+export function fmtPct(n: number | null | undefined, digits = 1): string {
+  if (n === null || n === undefined || !Number.isFinite(n)) return '—';
+  const r = Number(n.toFixed(digits));
+  return `${Object.is(r, -0) ? 0 : r}%`;
+}
+
+/**
+ * Round every decimal number directly followed by "%" in free text to at most
+ * `digits` decimals. "soil 28.944444444444446% below low 30%" ->
+ * "soil 28.9% below low 30%". Integers and non-percent numbers are untouched.
+ */
+export function roundPercentText(text: string, digits = 1): string {
+  return text.replace(/(-?\d+\.\d+)(\s?%)/g, (_m, num: string, pct: string) => {
+    const r = Number(Number(num).toFixed(digits));
+    return `${Object.is(r, -0) ? 0 : r}${pct}`;
+  });
+}
+
 export function fmtTime(iso: string | null | undefined): string {
   if (!iso) return '—';
   const d = new Date(iso);

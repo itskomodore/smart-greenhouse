@@ -1,5 +1,5 @@
 import type { IrrigationEvent } from '../types.js';
-import { fmtDuration, fmtTime } from '../lib/format.js';
+import { fmtDuration, fmtTime, roundPercentText } from '../lib/format.js';
 import { useLive, useTick } from '../lib/live.js';
 
 const RESULT_LABEL: Record<IrrigationEvent['result'], string> = {
@@ -37,7 +37,7 @@ export function EventsList() {
                 <span className={`badge badge-${e.result}`}>{RESULT_LABEL[e.result]}</span>
               </div>
               <div className="ev-body">
-                <span>{e.reason || 'no reason recorded'}</span>
+                <span>{e.reason ? roundPercentText(e.reason) : 'no reason recorded'}</span>
                 <span className="muted"> · {fmtDuration(eventDurationS(e, now))}</span>
               </div>
             </li>

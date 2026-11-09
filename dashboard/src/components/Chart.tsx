@@ -4,6 +4,7 @@ import type { Reading } from '../types.js';
 import { api } from '../lib/api.js';
 import { useDark } from '../lib/useDark.js';
 import { useLive } from '../lib/live.js';
+import { fmtPct } from '../lib/format.js';
 
 type MetricKey = 'soil_pct' | 't' | 'rh' | 'light_pct';
 type RangeKey = '1h' | '24h' | '7d';
@@ -26,6 +27,11 @@ const HEIGHT = 240;
 interface Thresholds {
   low: number;
   high: number;
+}
+
+/** Full host width, floored so a transiently hidden host never yields a degenerate plot. */
+function plotWidth(el: HTMLElement): number {
+  return Math.max(200, el.clientWidth);
 }
 
 /** Shade the soil chart: dry zone below low, wet zone at/above high. */
@@ -96,7 +102,7 @@ export function Chart() {
     const gridColor = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
     const lineColor = dark ? '#7fd9a8' : '#1f7a4d';
     const opts: uPlot.Options = {
-      width: Math.max(200, el.clientWidth),
+      width: plotWidth(el),
       height: HEIGHT,
       cursor: { drag: { x: false, y: false } },
       legend: { show: false },
@@ -118,6 +124,9 @@ export function Chart() {
     };
     const plot = new uPlot(opts, [xs, ys] as uPlot.AlignedData, el);
     plotRef.current = plot;
+    // Re-measure once the host is laid out: uPlot sizes itself from a width
+    // read taken before the new canvas is attached, so correct it here.
+    plot.setSize({ width: plotWidth(el), height: HEIGHT });
     return () => {
       plot.destroy();
       if (plotRef.current === plot) plotRef.current = null;
@@ -129,7 +138,10 @@ export function Chart() {
     const el = hostRef.current;
     if (!el) return;
     const ro = new ResizeObserver(() => {
-      plotRef.current?.setSize({ width: Math.max(200, el.clientWidth), height: HEIGHT });
+      const plot = plotRef.current;
+      if (!plot) return;
+      const width = plotWidth(el);
+      if (width !== plot.width) plot.setSize({ width, height: HEIGHT });
     });
     ro.observe(el);
     return () => ro.disconnect();
@@ -170,7 +182,7 @@ export function Chart() {
       {!hasData && !err && <p className="hint">{readings === null ? 'Loading…' : 'No readings in this range yet.'}</p>}
       <div ref={hostRef} className="plot" style={{ minHeight: hasData ? HEIGHT : 0 }} aria-label={`${metricDef.label} history chart`} role="img" />
       {metric === 'soil_pct' && thr && (
-        <p className="hint">Shaded: dry below {thr.low}%, wet at or above {thr.high}%.</p>
+        <p className="hint">Shaded: dry below {fmtPct(thr.low)}, wet at or above {fmtPct(thr.high)}.</p>
       )}
     </section>
   );

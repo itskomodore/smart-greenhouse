@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { clamp, clampDuration, fmtAgo, fmtDuration, soilZone, validateSettings, settingsToDraft } from './format.js';
+import {
+  clamp,
+  clampDuration,
+  fmtAgo,
+  fmtDuration,
+  fmtPct,
+  roundPercentText,
+  soilZone,
+  validateSettings,
+  settingsToDraft,
+} from './format.js';
 import { SETTINGS } from './testFixtures.js';
 
 describe('clamp helpers', () => {
@@ -31,6 +41,26 @@ describe('formatting', () => {
     expect(fmtDuration(3725)).toBe('1h 02m');
     expect(fmtDuration(90000)).toBe('1d 1h');
     expect(fmtDuration(undefined)).toBe('—');
+  });
+
+  it('rounds percent values in free text to at most 1 decimal', () => {
+    expect(roundPercentText('soil 28.944444444444446% below low 30%')).toBe('soil 28.9% below low 30%');
+    expect(roundPercentText('soil 61.25 % at or above high 60.0%')).toBe('soil 61.3 % at or above high 60%');
+    expect(roundPercentText('x -0.04% y')).toBe('x 0% y');
+    expect(roundPercentText('30% and 12.5%')).toBe('30% and 12.5%');
+  });
+
+  it('leaves non-percent decimals and plain text alone', () => {
+    expect(roundPercentText('dt=3.14159s, t=21.987°C')).toBe('dt=3.14159s, t=21.987°C');
+    expect(roundPercentText('no reason recorded')).toBe('no reason recorded');
+  });
+
+  it('formats percent values with fmtPct', () => {
+    expect(fmtPct(28.944)).toBe('28.9%');
+    expect(fmtPct(30)).toBe('30%');
+    expect(fmtPct(30.04)).toBe('30%');
+    expect(fmtPct(null)).toBe('—');
+    expect(fmtPct(Number.NaN)).toBe('—');
   });
 
   it('classifies soil zones against thresholds', () => {

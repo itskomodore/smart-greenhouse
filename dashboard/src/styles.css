@@ -118,8 +118,7 @@ h2 { font-size: 0.95rem; font-weight: 600; color: var(--muted); margin-bottom: 0
   border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer;
 }
 .seg-btn[aria-pressed='true'] { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
-.plot { width: 100%; }
-.plot:empty { display: none; }
+.plot { width: 100%; min-width: 0; }
 .uplot { font-family: inherit; }
 
 .grid-2 { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }

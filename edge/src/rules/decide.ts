@@ -110,7 +110,7 @@ function autoStart(state: RulesState, d: Derived, alarms: AlarmCode[]): Decision
     action: 'start',
     max_s: maxS,
     trigger: 'auto',
-    reason: `soil ${latest.soil_pct}% below low ${settings.low_threshold}%`,
+    reason: `soil ${Number(latest.soil_pct.toFixed(1))}% below low ${settings.low_threshold}%`,
     alarms,
   };
 }
